@@ -46,7 +46,7 @@ app.delete('/posts/:id',checkAuth,PostController.remove)
 app.patch('/posts/:id',PostController.update)
 
 
-app.listen(4444,(err)=>{
+app.listen(4443,(err)=>{
    if(err){
        return console.log(err)
    }
