@@ -3,16 +3,17 @@
 
 import express from 'express'
 import mongoose from 'mongoose'
-import {registerValidation, LoginValidation, postCreateValidation} from "./models/validations/auth.js";
-import checkAuth from "./models/utils/checkAuth.js";
-import * as UserController from './models/controllers/UserController.js'
-import * as PostController from './models/controllers/PostController.js'
+import { RegisterValidation, LoginValidation, PostCreateValidation } from "./models/validations/auth.js";
+import { UserController,PostController } from './models/controllers/index.js'
+import { handleValidationErrors,checkAuth } from "./models/utils/index.js";
 import multer from 'multer'
+
+import post from "./models/Post.js";
 
 mongoose
     .connect('mongodb+srv://Ouj:12345oruj@cluster0.dealq.mongodb.net/blog?retryWrites=true&w=majority')
     .then(() => console.log('DB is OK'))
-    .catch((err)=> console.log('DB error',err))
+    .catch((err) => console.log('DB error',err))
 
 const app = express()
 
@@ -29,8 +30,8 @@ const upload = multer({storage})
 
 app.use(express.json())
 
-app.post('/auth/login',LoginValidation,UserController.login)
-app.post('/auth/register',registerValidation,UserController.register)
+app.post('/auth/login',LoginValidation,handleValidationErrors,UserController.login)
+app.post('/auth/register',RegisterValidation,handleValidationErrors,UserController.register)
 app.get('/auth/me', checkAuth,UserController.getMe)
 
 app.post('/uploads/',checkAuth,upload.single('image1'),(req,res) => {
@@ -41,9 +42,9 @@ app.post('/uploads/',checkAuth,upload.single('image1'),(req,res) => {
 
 app.get('/posts',PostController.getAll)
 app.get('/posts/:id',PostController.getOne)
-app.post('/posts',checkAuth,PostController.create)
+app.post('/posts',checkAuth,PostCreateValidation,handleValidationErrors,PostController.create)
 app.delete('/posts/:id',checkAuth,PostController.remove)
-app.patch('/posts/:id',PostController.update)
+app.patch('/posts/:id',checkAuth,PostCreateValidation,handleValidationErrors,PostController.update)
 
 
 app.listen(4444,(err)=>{

@@ -1,6 +1,6 @@
 import {body} from 'express-validator'
 
-export const registerValidation = [
+export const RegisterValidation = [
     body('email','no correct email address').isEmail(),
     body('password','no correct password').isLength({min:5}),
     body('fullName','no correct name').isLength({min:3}),
@@ -14,7 +14,7 @@ export const LoginValidation = [
 ]
 
 
-export const postCreateValidation = [
+export const PostCreateValidation = [
     body('title','write title name').isLength({min:3}).isString(),
     body('text','write text').isLength({min:3}).isString(),
     body('tags','wrong tags format (write array)').optional().isArray(),
